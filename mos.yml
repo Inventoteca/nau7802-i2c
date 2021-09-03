@@ -1,0 +1,26 @@
+author: Turbine Kreuzberg GmbH
+type: lib
+description: Mongoose OS library for NAU7802
+version: 1.0
+platforms: [esp8266, esp32]
+
+sources:
+  - src
+
+includes:
+  - include
+
+config_schema:
+  - ["nau7802", "o", {title: "nau7802 settings"}]
+  - ["nau7802.drdy_gpio", "i", -1, {title: "Data Ready interrupt gpio"}]
+
+libs:
+  - location: https://github.com/mongoose-os-libs/i2c
+
+tags:
+  - c
+  - i2c
+  - hw
+  - docs:drivers:NAU7802 I2C
+
+manifest_version: 2017-09-29
