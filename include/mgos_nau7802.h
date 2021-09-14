@@ -49,18 +49,86 @@ extern "C" {
 
 struct mgos_nau7802;
 
-struct mgos_nau7802 *mgos_nau7802_create(struct mgos_i2c *i2c, int reset_gpio);
+typedef void (*mgos_nau7802_irq_handler_f)(struct mgos_nau7802 *dev);
+
+/**
+ * Initialize a NAU7802 on the I2C bus `i2c` at address 0x2A (fixed on hardware),
+ * upon success a new `struct mgos_nau7802` is allocated and returned. 
+ * If the device could not be initialized, NULL is returned.
+ * 
+ * Device is initialized with recomended values from datasheet 
+ * and MGOS_NAU7802_LDO_3V3, MGOS_NAU7802_GAIN_128 and MGOS_NAU7802_SPS_10
+ */
+struct mgos_nau7802 *mgos_nau7802_create(struct mgos_i2c *i2c);
+
+/**
+ * Destroy the data structure associated with a NAU7802 device. The reference
+ * to the pointer of the `struct mgos_nau7802` has to be provided, and upon
+ * successful destruction, its associated memory will be freed and the pointer
+ * set to NULL.
+ */
 bool mgos_nau7802_destroy(struct mgos_nau7802 **dev);
 
-bool mgos_nau7802_init(struct mgos_nau7802 *dev);
+/**
+ * Enable interrupt handling on pin `drdy_gpio`. On negative edge user cb will be triggered.
+ * User should clear interrupt by reading the device.
+ */
+bool mgos_nau7802_enable_interrupt(struct mgos_nau7802 *dev, int drdy_gpio, mgos_nau7802_irq_handler_f cb);
 
+/*
+ * Disable interrupt handling
+ */
+bool mgos_nau7802_disable_interrupt(struct mgos_nau7802 *dev);
+
+/**
+ * Perform a device reset
+ */
 bool mgos_nau7802_reset(struct mgos_nau7802 *dev);
+
+/**
+ * Power up device
+ */
 bool mgos_nau7802_power_up(struct mgos_nau7802 *dev);
+
+/**
+ * Power down device
+ */
 bool mgos_nau7802_power_down(struct mgos_nau7802 *dev);
+
+/**
+ * Set analog voltage regulator level
+ */
 bool mgos_nau7802_set_ldo(struct mgos_nau7802 *dev, uint8_t ldo_value);
+
+/**
+ * Set amplifier gain
+ */
 bool mgos_nau7802_set_gain(struct mgos_nau7802 *dev, uint8_t gain_value);
+
+/**
+ * Set ADC sampling frequency
+ */
 bool mgos_nau7802_set_sps(struct mgos_nau7802 *dev, uint8_t sps_value);
 
+/**
+ * Perform internal calibration routine
+ */
+bool mgos_nau7802_calibrate(struct mgos_nau7802 *dev);
+
+/**
+ * Check data ready
+ */
+bool mgos_nau7802_data_ready(struct mgos_nau7802 *dev);
+
+/**
+ * Wait for data ready. Function will block a maximum of `delay_ms * max_attepmts`
+ */ 
+bool mgos_nau7802_wait_data_ready(struct mgos_nau7802 *dev, uint32_t delay_ms, uint8_t max_attempts);
+
+/**
+ * Get one ADC reading. User should check for data ready
+ */
+int32_t mgos_nau7802_read(struct mgos_nau7802 *dev);
 
 #ifdef __cplusplus
 }
