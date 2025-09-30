@@ -43,7 +43,7 @@ bool mgos_nau7802_init(struct mgos_nau7802 *dev) {
   if (!mgos_nau7802_reset(dev)) goto init_failed;
   if (!mgos_nau7802_power_up(dev)) goto init_failed;
   if (!mgos_nau7802_set_ldo(dev, MGOS_NAU7802_LDO_3V3)) goto init_failed;
-  if (!mgos_nau7802_set_gain(dev, MGOS_NAU7802_GAIN_128)) goto init_failed;
+  if (!mgos_nau7802_set_gain(dev, MGOS_NAU7802_GAIN_16)) goto init_failed;
   if (!mgos_nau7802_set_sps(dev, MGOS_NAU7802_SPS_10)) goto init_failed;
 
   //default values recomended on datasheet
